@@ -1,0 +1,29 @@
+<svg viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="Accordion Fold: 5 panels with alternating fold directions">
+<defs>
+  <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <polygon points="0,0 7,3.5 0,7 1.8,3.5" fill="#29b6f6"/>
+  </marker>
+  <marker id="ah2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <polygon points="0,0 7,3.5 0,7 1.8,3.5" fill="#63d4f7"/>
+  </marker>
+</defs>
+  <rect x="18" y="25" width="44" height="100" rx="2" fill="rgba(0,100,220,0.11)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="63" y="25" width="44" height="100" rx="2" fill="rgba(0,100,220,0.24)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="108" y="25" width="44" height="100" rx="2" fill="rgba(0,100,220,0.11)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="153" y="25" width="44" height="100" rx="2" fill="rgba(0,100,220,0.24)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="198" y="25" width="44" height="100" rx="2" fill="rgba(0,100,220,0.11)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <line x1="62" y1="15" x2="62" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M86,14 Q62,4 38,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <line x1="107" y1="15" x2="107" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M83,14 Q107,4 131,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <line x1="152" y1="15" x2="152" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M176,14 Q152,4 128,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <line x1="197" y1="15" x2="197" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M173,14 Q197,4 221,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <text x="40" y="75" font-family="system-ui,sans-serif" font-size="13" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">1</text>
+  <text x="85" y="75" font-family="system-ui,sans-serif" font-size="13" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">2</text>
+  <text x="130" y="75" font-family="system-ui,sans-serif" font-size="13" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">3</text>
+  <text x="175" y="75" font-family="system-ui,sans-serif" font-size="13" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">4</text>
+  <text x="220" y="75" font-family="system-ui,sans-serif" font-size="13" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">5</text>
+  <text x="140" y="144" font-family="system-ui,sans-serif" font-size="7.5" fill="rgba(79,195,247,0.55)" text-anchor="middle" dominant-baseline="middle">4 folds · 5 panels · alternating ← → ← →</text>
+</svg>
