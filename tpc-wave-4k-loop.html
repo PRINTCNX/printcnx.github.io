@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TPC Wave Loop — 4K Recorder</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#000; color:#fff; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:system-ui,sans-serif; gap:16px;
+  }
+  #preview-wrap { background:#04111e; width:min(100vw,calc(100vh * 16/9)); aspect-ratio:16/9; }
+  #wave-canvas  { display:block; width:100%; height:100%; }
+  #controls     { display:flex; gap:14px; }
+  button { padding:11px 26px; border:none; border-radius:7px; font-size:14px; font-weight:700; cursor:pointer; }
+  button:disabled { opacity:.3; cursor:not-allowed; }
+  #btn-record  { background:#e040fb; color:#fff; }
+  #btn-preview { background:#00b4d8; color:#04111e; }
+  .bar  { width:340px; height:4px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; }
+  .fill { height:100%; width:0%; background:linear-gradient(90deg,#00b4d8,#e040fb); border-radius:2px; transition:width .05s linear; }
+  #status { font-size:12px; color:rgba(255,255,255,.45); text-align:center; }
+  #info   { font-size:11px; color:rgba(255,255,255,.22); text-align:center; line-height:1.7; }
+</style>
+</head>
+<body>
+
+<div id="preview-wrap"><canvas id="wave-canvas"></canvas></div>
+
+<div id="controls">
+  <button id="btn-preview">⏹ Stop Preview</button>
+  <button id="btn-record">⏺ Record 4K Loop</button>
+</div>
+<div class="bar"><div class="fill" id="progress"></div></div>
+<div id="status">Live preview running. Click Record to capture a perfect 2-second 4K loop.</div>
+<div id="info">Output: WebM · 3840×2160 · 60fps · 80 Mbps · 2-second perfect loop<br>
+Convert: <code>ffmpeg -i TPC-Wave-Loop-4K.webm -c:v libx264 -crf 16 output.mp4</code></div>
+
+<script>
+/* ── Constants — exact match to LoadingScreen.astro ─────────────── */
+const TILE    = 26;
+const DOT_R   = 7;
+const PIX_S   = 8;
+const WAVELEN = 95;
+const SPEED   = 0.5;        // 0.5 cycles/s → loop period = exactly 2.000 s
+const AMP     = 4.5;
+const LOOP    = 1 / SPEED;  // 2.0 s
+const OUT_W   = 3840;
+const OUT_H   = 2160;
+const FPS     = 60;
+const FRAMES  = LOOP * FPS; // 120
+
+const LOGO_F  = 0.22;       // logo = 22% of shorter dim
+const BOUNCE  = 0.03;       // ±3% logo scale pulse (subtle)
+
+// Quad definitions — identical to LoadingScreen.astro
+const QUADS = [
+  { type:'pixel', cxF:1, cyF:1, cc:[130,255,245], fc:[0,55,85]   }, // Cyan   TL
+  { type:'dot',   cxF:0, cyF:1, cc:[255,120,240], fc:[85,0,70]   }, // Magenta TR
+  { type:'dot',   cxF:1, cyF:0, cc:[255,255,100], fc:[110,75,0]  }, // Yellow BL
+  { type:'pixel', cxF:0, cyF:0, cc:[200,225,255], fc:[38,52,70]  }, // Key    BR
+];
+
+const lerp = (a,b,t) => a + (b-a)*t;
+
+/* ── Logo — embedded SVG as a data URL, pre-rasterised once ─────── */
+// The SVG is inlined as a JS string so we can set an explicit size
+// (width/height must be non-zero for Chrome to rasterise via canvas drawImage)
+const SVG_SRC = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" width="360" height="360">
+  <defs>
+    <linearGradient id="g9" x1="-42.76" y1="296.53" x2="420.18" y2="90.41" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c1422f"/><stop offset=".2" stop-color="#c1422f"/>
+      <stop offset=".72" stop-color="#fdce1c"/><stop offset="1" stop-color="#fed11a"/>
+    </linearGradient>
+    <linearGradient id="lg1" x1="5.69" y1="271.37" x2="325.64" y2="47.34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0d3c66"/><stop offset="1" stop-color="#00a7e1"/>
+    </linearGradient>
+    <linearGradient id="lg2" x1="-418.53" y1="695.71" x2="836.02" y2="-215.77" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#115a22"/><stop offset=".47" stop-color="#526325"/>
+      <stop offset=".70" stop-color="#dad53a"/><stop offset="1" stop-color="#e3dd3c"/>
+    </linearGradient>
+    <linearGradient id="lg3" x1="127.89" y1="382.64" x2="376.18" y2="227.49" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#560000"/><stop offset=".81" stop-color="#ed1c24"/>
+      <stop offset="1" stop-color="#ef4347"/>
+    </linearGradient>
+    <linearGradient id="lg4" x1="-4.6" y1="177.3" x2="243.06" y2="-23.25" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#501261"/><stop offset="1" stop-color="#b7236e"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#g9)"  fill-rule="nonzero" d="M343.57,130.55c-105.91,9.98-282.91,111.09-314.02,133.17,15.5,33.61,285.43-91.63,314.02-133.17h0ZM345.6,221.24c-41.46,41.45-203.8,119.54-243.13,111.73,46.92-36.27,210.33-116.78,243.13-111.73h0ZM287.51,52.63c-28.76,24.03-242.25,158.52-278.41,122.59,34.48-22.12,215.77-136.99,278.41-122.59Z"/>
+  <path fill="url(#lg1)" fill-rule="evenodd" d="M323.16,95.92c-10.3-15.62-19.42-28.78-33.26-41.32C204.13,118.5,102.93,158.79,13.8,218.85l14.58,42.98,21.38-13.57c88.9-54.71,184.39-97.75,273.4-152.35Z"/>
+  <path fill="url(#lg2)" fill-rule="evenodd" d="M350.92,187.82c.11-11.96.84-27.73-5.68-51.96-87.49,69.31-194.13,101.79-288.39,163.31,11.08,11.99,27.38,23.58,42.76,32.07,87.05-62.5,164.14-83.49,251.31-143.41Z"/>
+  <path fill="url(#lg3)" fill-rule="evenodd" d="M345.23,224.5c-38.29,40.93-164.3,89.2-208.49,121.83,88.65,20.36,181.41-26.86,208.49-121.83Z"/>
+  <path fill="url(#lg4)" fill-rule="evenodd" d="M13.23,168.25C89.42,115.65,181.89,83.22,250.63,24.58c-29.26-14.2-76.19-23.48-125.78-6.22,59.42,1.63,27.7,11.43-24.09,39.51-30.64,17.57-49.22,26.36-75.74,49.63-10.15,19.46-14.95,46.23-16.01,63.17l4.23-2.43Z"/>
+</svg>`;
+
+let logoBitmap = null; // pre-rasterised offscreen canvas
+
+async function loadLogo(size) {
+  // Rasterise SVG string → offscreen canvas at given pixel size
+  // Using encodeURIComponent data URL with explicit width/height in SVG
+  // ensures Chrome canvas renders it correctly
+  const sized = SVG_SRC.replace('width="360" height="360"',
+    `width="${size}" height="${size}"`);
+  const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(sized);
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const oc = document.createElement('canvas');
+      oc.width = oc.height = size;
+      oc.getContext('2d').drawImage(img, 0, 0, size, size);
+      logoBitmap = oc;
+      resolve(oc);
+    };
+    img.onerror = (e) => reject(e);
+    img.src = dataUrl;
+  });
+}
+
+/* ── Draw one complete frame onto any canvas context ─────────────── */
+// Exact port of LoadingScreen.astro's startQuadRipples, adapted for
+// a single canvas (we clip per-quadrant instead of using separate canvases)
+function drawFrame(ctx, W, H, t) {
+  // Perfect loop: mod by LOOP
+  const tMod = ((t % LOOP) + LOOP) % LOOP;
+
+  // Background
+  ctx.fillStyle = '#04111e';
+  ctx.fillRect(0, 0, W, H);
+
+  const W0 = Math.floor(W / 2); // left quads
+  const W1 = W - W0;             // right quads
+  const H0 = Math.floor(H / 2); // top quads
+  const H1 = H - H0;             // bottom quads
+
+  const quadSizes = [
+    { sel:'.q-c', W:W0, H:H0, ox:0,  oy:0  }, // TL
+    { sel:'.q-m', W:W1, H:H0, ox:W0, oy:0  }, // TR
+    { sel:'.q-y', W:W0, H:H1, ox:0,  oy:H0 }, // BL
+    { sel:'.q-k', W:W1, H:H1, ox:W0, oy:H0 }, // BR
+  ];
+
+  for (let qi = 0; qi < QUADS.length; qi++) {
+    const q  = QUADS[qi];
+    const sz = quadSizes[qi];
+    const QW = sz.W, QH = sz.H;
+    const ox = sz.ox, oy = sz.oy;
+
+    // Screen centre in this quadrant's LOCAL coordinate space
+    const cx = q.cxF * QW;  // = QW for TL/BL, = 0 for TR/BR
+    const cy = q.cyF * QH;  // = QH for TL/TR, = 0 for BL/BR
+    const maxDist = Math.sqrt(QW*QW + QH*QH);
+
+    // Outer-corner vignette — fades outer corners (matches LoadingScreen.astro)
+    const FADE_PX = TILE * 1.1;
+    const outerX  = q.cxF === 1 ? 0 : QW;  // outer (far) corner x
+    const outerY  = q.cyF === 1 ? 0 : QH;
+
+    // Seam-anchored grid: first dot is always SEAM_OFF FROM the seam, growing outward.
+    // SEAM_OFF = DOT_R + PIX_S/2 → ~11px per side → ~8px visible edge gap = one pixel square
+    const SEAM_OFF = DOT_R + Math.ceil(PIX_S / 2); // 7+4 = 11px
+    const xSign    = q.cxF === 1 ? -1 : 1; // direction away from seam (left or right)
+    const ySign    = q.cyF === 1 ? -1 : 1; // direction away from seam (up or down)
+
+    const cols = Math.ceil(QW / TILE) + 2;
+    const rows = Math.ceil(QH / TILE) + 2;
+
+    for (let gi = 0; gi < cols; gi++) {
+      for (let gj = 0; gj < rows; gj++) {
+        // Dot centre in LOCAL quadrant coords, anchored from the seam outward
+        const bx = cx + xSign * (SEAM_OFF + gi * TILE);
+        const by = cy + ySign * (SEAM_OFF + gj * TILE);
+
+        // Skip if outside this quadrant's bounds
+        if (bx < 0 || bx > QW || by < 0 || by > QH) continue;
+
+        const dx   = bx - cx;
+        const dy   = by - cy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+
+        const phase = (dist / WAVELEN) * Math.PI * 2 - tMod * SPEED * Math.PI * 2;
+        const wave  = Math.sin(phase);
+        const yOff  = -wave * AMP;
+
+        const td = Math.min(dist / maxDist, 1);
+        const r  = Math.round(lerp(q.cc[0], q.fc[0], td));
+        const g  = Math.round(lerp(q.cc[1], q.fc[1], td));
+        const b  = Math.round(lerp(q.cc[2], q.fc[2], td));
+
+        const baseAlpha = lerp(0.28, 0.80, (wave + 1) / 2);
+
+        // Outer-corner vignette
+        const outerFade = Math.min(
+          Math.min(Math.abs(bx - outerX), FADE_PX) / FADE_PX,
+          Math.min(Math.abs(by - outerY), FADE_PX) / FADE_PX
+        );
+
+        const alpha = baseAlpha * outerFade;
+        if (alpha < 0.01) continue;
+
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+
+        if (q.type === 'pixel') {
+          const s = PIX_S + wave * 2;
+          ctx.fillRect(ox + bx - s/2, oy + by - s/2 + yOff, s, s);
+        } else {
+          const rad = Math.max(0, DOT_R + wave * 2);
+          ctx.beginPath();
+          ctx.arc(ox + bx, oy + by + yOff, rad, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+  }
+}
+
+/* ── Draw logo with pulsing glow and bounce scale ────────────────── */
+function drawLogo(ctx, W, H, t) {
+  if (!logoBitmap) return;
+  const tMod = ((t % LOOP) + LOOP) % LOOP;
+
+  // Wave phase at screen centre drives bounce (subtle)
+  const centerWave = Math.sin(-tMod * SPEED * Math.PI * 2); // −1…+1
+
+  const baseSize = Math.min(W, H) * LOGO_F;
+  const logoSize = baseSize * (1 + BOUNCE * centerWave);   // ±3% pulse
+  const cx = W / 2, cy = H / 2;
+  const lx = cx - logoSize / 2;
+  const ly = cy - logoSize / 2;
+
+  // 1. Dark clearing disk — steady with very gentle pulse on outer edge
+  const glowInner = logoSize * 0.46;
+  const glowOuter = logoSize * 1.00;
+  const glowA = 0.90 + 0.03 * ((centerWave + 1) / 2);  // 0.90–0.93, barely pulses
+  const disk = ctx.createRadialGradient(cx, cy, glowInner, cx, cy, glowOuter);
+  disk.addColorStop(0,    `rgba(4,17,30,${glowA})`);
+  disk.addColorStop(0.55, `rgba(4,17,30,${glowA * 0.88})`);
+  disk.addColorStop(0.80, `rgba(0,30,55,${glowA * 0.40})`);
+  disk.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = disk;
+  ctx.beginPath();
+  ctx.arc(cx, cy, glowOuter, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Expanding ripple ring — exact ripple phase velocity (WAVELEN × SPEED = 47.5 px/s)
+  // Bell-curve alpha: sin(π·t/LOOP) — fades IN from 0, peaks at mid-cycle, fades OUT to 0
+  // Zero alpha at t=0 and t=LOOP — seamless forever
+  const ringRadius = (logoSize / 2) + tMod * SPEED * WAVELEN; // matches ripple phase velocity
+  const ringHalfW  = logoSize * 0.03 + (tMod / LOOP) * logoSize * 0.14;
+  const ringAlpha  = 0.55 * Math.sin(Math.PI * tMod / LOOP);     // 0→0.55→0
+  if (ringAlpha > 0.005) {
+    const ri = Math.max(0, ringRadius - ringHalfW);
+    const ro = ringRadius + ringHalfW;
+    const ring = ctx.createRadialGradient(cx, cy, ri, cx, cy, ro);
+    ring.addColorStop(0,   'rgba(0,200,240,0)');
+    ring.addColorStop(0.5, `rgba(0,215,248,${ringAlpha})`);
+    ring.addColorStop(1,   'rgba(0,140,220,0)');
+    ctx.fillStyle = ring;
+    ctx.beginPath();
+    ctx.arc(cx, cy, ro, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 3. Logo — drawn on top of clearing disk
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,180,230,0.35)';
+  ctx.shadowBlur  = baseSize * 0.04;
+  ctx.drawImage(logoBitmap, lx, ly, logoSize, logoSize);
+  ctx.restore();
+}
+
+/* ── Preview ─────────────────────────────────────────────────────── */
+const canvas = document.getElementById('wave-canvas');
+const ctx    = canvas.getContext('2d');
+let raf = null, running = false;
+
+function sizeCanvas() {
+  const wrap = document.getElementById('preview-wrap');
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+window.addEventListener('resize', sizeCanvas);
+sizeCanvas();
+
+async function startPreview() {
+  if (!logoBitmap) await loadLogo(512);
+  running = true;
+  const t0 = performance.now();
+  function frame(now) {
+    if (!running) return;
+    drawFrame(ctx, canvas.width, canvas.height, (now - t0) / 1000);
+    drawLogo(ctx, canvas.width, canvas.height, (now - t0) / 1000);
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+  document.getElementById('btn-preview').textContent = '⏹ Stop Preview';
+}
+function stopPreview() {
+  running = false;
+  if (raf) cancelAnimationFrame(raf);
+  document.getElementById('btn-preview').textContent = '⏵ Start Preview';
+}
+document.getElementById('btn-preview').addEventListener('click', () => {
+  running ? stopPreview() : startPreview();
+});
+
+/* ── Record ──────────────────────────────────────────────────────── */
+document.getElementById('btn-record').addEventListener('click', async () => {
+  const btnR = document.getElementById('btn-record');
+  const btnP = document.getElementById('btn-preview');
+  const stat = document.getElementById('status');
+  const prog = document.getElementById('progress');
+
+  stopPreview();
+  btnR.disabled = btnP.disabled = true;
+  prog.style.width = '0%';
+  stat.textContent = 'Pre-rasterising logo at 4K size…';
+
+  // Rasterise logo at 4K-appropriate resolution for maximum quality
+  logoBitmap = null;
+  const logoPx = Math.round(Math.min(OUT_W, OUT_H) * LOGO_F * 1.5);
+  await loadLogo(logoPx);
+
+  const rc = document.createElement('canvas');
+  rc.width = OUT_W; rc.height = OUT_H;
+  const rx = rc.getContext('2d');
+
+  const mime = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
+    .find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+  const stream   = rc.captureStream(FPS);
+  const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 80_000_000 });
+  const chunks   = [];
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: mime });
+    Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob), download: 'TPC-Wave-Loop-4K.webm'
+    }).click();
+    btnR.disabled = btnP.disabled = false;
+    prog.style.width = '100%';
+    stat.textContent = '✅ Downloaded! Import into any media player or signage software.';
+    // Restore preview-res logo and restart
+    logoBitmap = null;
+    loadLogo(512).then(startPreview);
+  };
+
+  recorder.start();
+  let fi = 0;
+  function next() {
+    if (fi >= FRAMES) { recorder.stop(); return; }
+    const t = (fi / FPS) % LOOP;
+    drawFrame(rx, OUT_W, OUT_H, t);
+    drawLogo(rx, OUT_W, OUT_H, t);
+    fi++;
+    prog.style.width = Math.round(fi / FRAMES * 100) + '%';
+    stat.textContent = `Rendering frame ${fi} of ${FRAMES} (${Math.round(fi/FRAMES*100)}%)…`;
+    setTimeout(next, 1000 / FPS);
+  }
+  next();
+});
+
+// Auto-start
+startPreview();
+</script>
+</body>
+</html>

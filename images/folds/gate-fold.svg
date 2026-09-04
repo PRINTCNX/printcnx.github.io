@@ -1,0 +1,22 @@
+<svg viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="Gate Fold: outer panels open like doors to reveal center">
+<defs>
+  <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <polygon points="0,0 7,3.5 0,7 1.8,3.5" fill="#29b6f6"/>
+  </marker>
+</defs>
+  <rect x="18" y="25" width="53" height="100" rx="2" fill="rgba(0,100,220,0.24)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="73" y="25" width="118" height="100" rx="2" fill="rgba(0,100,220,0.11)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="193" y="25" width="53" height="100" rx="2" fill="rgba(0,100,220,0.24)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <line x1="132" y1="25" x2="132" y2="125" stroke="rgba(79,195,247,0.22)" stroke-width="1" stroke-dasharray="3,5"/>
+  <line x1="72" y1="15" x2="72" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="192" y1="15" x2="192" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M48,14 Q72,4 96,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <path d="M216,14 Q192,4 168,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <text x="44" y="65" font-family="system-ui,sans-serif" font-size="14" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">L</text>
+  <text x="132" y="65" font-family="system-ui,sans-serif" font-size="9" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">Center</text>
+  <text x="219" y="65" font-family="system-ui,sans-serif" font-size="14" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">R</text>
+  <text x="44" y="85" font-family="system-ui,sans-serif" font-size="8" fill="#90caf9" text-anchor="middle" dominant-baseline="middle">Gate</text>
+  <text x="132" y="85" font-family="system-ui,sans-serif" font-size="8" fill="#90caf9" text-anchor="middle" dominant-baseline="middle">Wide spread</text>
+  <text x="219" y="85" font-family="system-ui,sans-serif" font-size="8" fill="#90caf9" text-anchor="middle" dominant-baseline="middle">Gate</text>
+  <text x="140" y="144" font-family="system-ui,sans-serif" font-size="7.5" fill="rgba(79,195,247,0.55)" text-anchor="middle" dominant-baseline="middle">2 folds · 4 panels · opens like double doors</text>
+</svg>
