@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-dasharray: 6.2 3.1;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        fill: none;
+      }
+
+      .cls-1, .cls-3, .cls-4 {
+        stroke: #009ee2;
+        stroke-width: 2px;
+      }
+
+      .cls-1, .cls-3, .cls-4, .cls-5 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2 {
+        stroke-linejoin: round;
+      }
+
+      .cls-2, .cls-5 {
+        stroke: #000;
+        stroke-width: 3px;
+      }
+
+      .cls-3 {
+        stroke-dasharray: 4.92 2.46;
+      }
+    </style>
+  </defs>
+  <path class="cls-2" d="M182.17,63.28l-82.17-30.63L17.83,63.28c-10.55,3.93-15.83,11.45-15.83,18.96h196c0-7.52-5.28-15.03-15.83-18.96Z"/>
+  <rect class="cls-5" x="2" y="82.24" width="196" height="85.11"/>
+  <g>
+    <polyline class="cls-4" points="112.89 154.03 112.89 157.03 109.89 157.03"/>
+    <line class="cls-1" x1="106.79" y1="157.03" x2="24.6" y2="157.03"/>
+    <polyline class="cls-4" points="23.05 157.03 20.05 157.03 20.05 154.03"/>
+    <line class="cls-3" x1="20.05" y1="151.57" x2="20.05" y2="138.05"/>
+    <polyline class="cls-4" points="20.05 136.82 20.05 133.82 23.05 133.82"/>
+    <line class="cls-1" x1="26.15" y1="133.82" x2="108.34" y2="133.82"/>
+    <polyline class="cls-4" points="109.89 133.82 112.89 133.82 112.89 136.82"/>
+    <line class="cls-3" x1="112.89" y1="139.28" x2="112.89" y2="152.8"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="Half-Fold: 2 panels, 1 center fold">
+<defs>
+  <marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+    <polygon points="0,0 7,3.5 0,7 1.8,3.5" fill="#29b6f6"/>
+  </marker>
+</defs>
+  <rect x="18" y="25" width="121" height="100" rx="2" fill="rgba(0,100,220,0.24)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <rect x="141" y="25" width="121" height="100" rx="2" fill="rgba(0,100,220,0.11)" stroke="#4fc3f7" stroke-width="1.5"/>
+  <line x1="140" y1="15" x2="140" y2="137" stroke="#4fc3f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M164,14 Q140,4 116,14" stroke="#29b6f6" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+  <text x="79" y="65" font-family="system-ui,sans-serif" font-size="14" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">2</text>
+  <text x="202" y="65" font-family="system-ui,sans-serif" font-size="14" fill="rgba(79,195,247,0.36)" text-anchor="middle" dominant-baseline="middle">1</text>
+  <text x="79" y="85" font-family="system-ui,sans-serif" font-size="8" fill="#90caf9" text-anchor="middle" dominant-baseline="middle">Back</text>
+  <text x="202" y="85" font-family="system-ui,sans-serif" font-size="8" fill="#90caf9" text-anchor="middle" dominant-baseline="middle">Front</text>
+  <text x="140" y="144" font-family="system-ui,sans-serif" font-size="7.5" fill="rgba(79,195,247,0.55)" text-anchor="middle" dominant-baseline="middle">1 fold · 2 panels</text>
+</svg>
