@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <!-- TPC Red Architectural Outer Ring Gradient -->
+    <linearGradient id="upload-ring-grad" x1="20" y1="16" x2="180" y2="184" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="45%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <radialGradient id="upload-ring-glow" cx="35%" cy="28%" r="65%">
+      <stop offset="0%" stop-color="#fca5a5" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Specular Rim Highlight -->
+    <linearGradient id="upload-rim" x1="100" y1="10" x2="100" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#450a0a" stop-opacity="0.35"/>
+    </linearGradient>
+    <!-- Inner White Card Surface -->
+    <linearGradient id="upload-card-bg" x1="100" y1="24" x2="100" y2="176" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <!-- Cloud Upload Icon Gradient -->
+    <linearGradient id="upload-icon-grad" x1="50" y1="62" x2="150" y2="144" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="55%" stop-color="#c53030"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+    <filter id="upload-card-shadow" x="14" y="16" width="172" height="174" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#450a0a" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Architectural Squircle Ring -->
+  <rect x="8" y="8" width="184" height="184" rx="48" fill="url(#upload-ring-grad)"/>
+  <rect x="8" y="8" width="184" height="184" rx="48" fill="url(#upload-ring-glow)"/>
+  <rect x="9.5" y="9.5" width="181" height="181" rx="46.5" stroke="url(#upload-rim)" stroke-width="2"/>
+
+  <!-- Elevated Inner White Squircle -->
+  <g filter="url(#upload-card-shadow)">
+    <rect x="24" y="24" width="152" height="152" rx="34" fill="url(#upload-card-bg)"/>
+    <rect x="24.75" y="24.75" width="150.5" height="150.5" rx="33.25" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+
+  <!-- Crisp Cloud-Upload Vector -->
+  <g stroke="url(#upload-icon-grad)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Cloud silhouette -->
+    <path d="M76 130H64a20 20 0 0 1-3.2-39.7A28 28 0 0 1 114.5 76a22 22 0 0 1 25.5 21.7c0 .8 0 1.6-.1 2.3A17 17 0 0 1 136 130h-12"/>
+    <!-- Upload arrow -->
+    <line x1="100" y1="138" x2="100" y2="96"/>
+    <polyline points="84 111 100 95 116 111"/>
+  </g>
+</svg>

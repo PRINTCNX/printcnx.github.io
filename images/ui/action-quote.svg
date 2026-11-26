@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <!-- TPC Green Architectural Outer Ring Gradient -->
+    <linearGradient id="quote-ring-grad" x1="20" y1="16" x2="180" y2="184" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="45%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#0f5132"/>
+    </linearGradient>
+    <radialGradient id="quote-ring-glow" cx="35%" cy="28%" r="65%">
+      <stop offset="0%" stop-color="#86efac" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Specular Rim Highlight -->
+    <linearGradient id="quote-rim" x1="100" y1="10" x2="100" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#052e16" stop-opacity="0.35"/>
+    </linearGradient>
+    <!-- Inner White Card Surface -->
+    <linearGradient id="quote-card-bg" x1="100" y1="24" x2="100" y2="176" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <!-- Document & Stylus Icon Gradient -->
+    <linearGradient id="quote-icon-grad" x1="56" y1="52" x2="146" y2="148" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="55%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+    <filter id="quote-card-shadow" x="14" y="16" width="172" height="174" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#052e16" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Architectural Squircle Ring -->
+  <rect x="8" y="8" width="184" height="184" rx="48" fill="url(#quote-ring-grad)"/>
+  <rect x="8" y="8" width="184" height="184" rx="48" fill="url(#quote-ring-glow)"/>
+  <rect x="9.5" y="9.5" width="181" height="181" rx="46.5" stroke="url(#quote-rim)" stroke-width="2"/>
+
+  <!-- Elevated Inner White Squircle -->
+  <g filter="url(#quote-card-shadow)">
+    <rect x="24" y="24" width="152" height="152" rx="34" fill="url(#quote-card-bg)"/>
+    <rect x="24.75" y="24.75" width="150.5" height="150.5" rx="33.25" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+
+  <!-- Crisp Document & Stylus Vector -->
+  <g stroke="url(#quote-icon-grad)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Document body with clipped corner & space for stylus -->
+    <path d="M126 116v20a8 8 0 0 1-8 8H68a8 8 0 0 1-8-8V64a8 8 0 0 1 8-8h36l22 22v8"/>
+    <!-- Folded corner -->
+    <path d="M104 56v18a4 4 0 0 0 4 4h18"/>
+    <!-- Document lines -->
+    <line x1="75" y1="84" x2="94" y2="84"/>
+    <line x1="75" y1="101" x2="104" y2="101"/>
+    <line x1="75" y1="118" x2="96" y2="118"/>
+    <!-- Precision Stylus / Pen -->
+    <path d="M137.5 85.5a6.5 6.5 0 0 1 9.2 9.2l-31.2 31.2-13.5 3.8 3.8-13.5 31.7-30.7z" fill="#ffffff" fill-opacity="0.85"/>
+    <line x1="128" y1="95" x2="137" y2="104"/>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# The Printing Connection — www.printcnx.com
+# robots.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Allow all well-behaved crawlers to index the public site
+User-agent: *
+Allow: /
+
+# ── Private client portals — do NOT crawl or index ───────────────────────────
+# These pages are shared directly with clients via private URL.
+# They must not appear in search results or be scraped.
+Disallow: /portals/
+Disallow: /cinemacon2026/
+Disallow: /willrogers/
+Disallow: /cinemacon/
+Disallow: /clients/
+Disallow: /admin/
+
+# ── Form handler — server-side PHP, not meant for crawlers ───────────────────
+Disallow: /forms/
+
+# ── Sitemap location ─────────────────────────────────────────────────────────
+Sitemap: https://www.printcnx.com/sitemap-index.xml
